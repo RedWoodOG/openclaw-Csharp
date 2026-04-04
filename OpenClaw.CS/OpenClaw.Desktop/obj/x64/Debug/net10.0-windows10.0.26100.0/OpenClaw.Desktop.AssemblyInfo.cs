@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OpenClaw.Desktop")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0e9f512444f3112fac0ecb24eef2c74b0418b145")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3f8748cff93dc402b42eb48e4b462d9fe9b7c580")]
 [assembly: System.Reflection.AssemblyProductAttribute("OpenClaw.Desktop")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OpenClaw.Desktop")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

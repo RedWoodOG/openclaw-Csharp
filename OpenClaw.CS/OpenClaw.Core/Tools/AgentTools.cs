@@ -2,6 +2,7 @@ namespace OpenClaw.Tools;
 
 using OpenClaw.Core;
 using OpenClaw.LLM;
+using OpenClaw.Permissions;
 using System.Text;
 using System.Text.Json;
 
@@ -181,52 +182,170 @@ public sealed class AgentTool : ToolBase<AgentParams>
 {
     private readonly IModelClient? _modelClient;
     private readonly IToolRegistry? _toolRegistry;
+    private readonly Func<IModelClient, IToolRegistry, IPermissionManager, OpenClawAgent>? _agentFactory;
     
     public override string Name => "agent";
     public override string Description => "Spawn a subagent for specialized tasks";
     
-    public AgentTool(IModelClient? modelClient = null, IToolRegistry? toolRegistry = null)
+    public AgentTool(
+        IModelClient? modelClient = null, 
+        IToolRegistry? toolRegistry = null,
+        Func<IModelClient, IToolRegistry, IPermissionManager, OpenClawAgent>? agentFactory = null)
     {
         _modelClient = modelClient;
         _toolRegistry = toolRegistry;
+        _agentFactory = agentFactory;
     }
     
     protected override async Task<ToolResult> ExecuteCoreAsync(AgentParams p, CancellationToken ct)
     {
+        if (_modelClient == null || _toolRegistry == null)
+        {
+            return ToolResult.Fail("Agent tool requires IModelClient and IToolRegistry to be configured");
+        }
+        
         var definition = GetAgentDefinition(p.AgentType);
         
         var output = new StringBuilder();
         output.AppendLine($"[Agent: {definition.Name}] Started");
         output.AppendLine($"Task: {p.Task}");
+        output.AppendLine($"Context: {p.Context ?? "None provided"}");
         output.AppendLine("---");
         
-        // In a real implementation, this would spawn a new agent
-        // For now, return the task description
-        output.AppendLine($"Agent type: {definition.Name}");
-        output.AppendLine($"Allowed tools: {string.Join(", ", definition.AllowedTools)}");
-        output.AppendLine("---");
-        output.AppendLine($"[Agent: {definition.Name}] Completed");
-        
-        return ToolResult.Ok(output.ToString());
+        try
+        {
+            // Create filtered tool registry for this agent type
+            var filteredRegistry = new FilteredToolRegistry(_toolRegistry, definition.AllowedTools);
+            
+            // Create a simple permission manager that allows all tools in the allowed list
+            var permissionManager = new SubagentPermissionManager(definition.AllowedTools);
+            
+            // Create the subagent
+            var subagent = _agentFactory != null 
+                ? _agentFactory(_modelClient, filteredRegistry, permissionManager)
+                : new OpenClawAgent(_modelClient, filteredRegistry, permissionManager);
+            
+            // Create a session for the subagent
+            var session = new Session
+            {
+                Metadata = new SessionMetadata
+                {
+                    WorkingDirectory = Directory.GetCurrentDirectory(),
+                    Model = null // Use default
+                }
+            };
+            
+            // Add the task as a user message with system prompt
+            var fullTask = BuildSubagentTask(definition, p.Task, p.Context);
+            session.AddMessage(new Message { Role = "user", Content = fullTask });
+            
+            // Run the subagent and collect output
+            var responseBuilder = new StringBuilder();
+            var toolCalls = new List<(string Name, string Args, string Result)>();
+            
+            await foreach (var evt in subagent.RunAsync(session, ct))
+            {
+                switch (evt)
+                {
+                    case AgentEvent.MessageDelta delta:
+                        responseBuilder.Append(delta.Message.Content);
+                        break;
+                        
+                    case AgentEvent.ToolCall toolCall:
+                        var argsJson = toolCall.Input.GetRawText();
+                        toolCalls.Add((toolCall.Name, argsJson, ""));
+                        break;
+                        
+                    case AgentEvent.ToolResultEvent toolResult:
+                        if (toolCalls.Count > 0)
+                        {
+                            var last = toolCalls[^1];
+                            toolCalls[^1] = (last.Name, last.Args, toolResult.Result.Output);
+                        }
+                        break;
+                        
+                    case AgentEvent.Complete complete:
+                        // Log any tool calls made
+                        if (toolCalls.Count > 0)
+                        {
+                            output.AppendLine($"Tools used ({toolCalls.Count}):");
+                            foreach (var (name, args, result) in toolCalls.Take(5))
+                            {
+                                var resultPreview = string.IsNullOrEmpty(result) 
+                                    ? "(no output)" 
+                                    : result.Length > 100 ? result[..100] + "..." : result;
+                                output.AppendLine($"  - {name}: {resultPreview}");
+                            }
+                            if (toolCalls.Count > 5)
+                            {
+                                output.AppendLine($"  ... and {toolCalls.Count - 5} more");
+                            }
+                            output.AppendLine("---");
+                        }
+                        break;
+                        
+                    case AgentEvent.Error error:
+                        output.AppendLine($"Error: {error.Ex.Message}");
+                        break;
+                }
+            }
+            
+            // Add the response
+            var response = responseBuilder.ToString();
+            if (!string.IsNullOrEmpty(response))
+            {
+                output.AppendLine("Response:");
+                output.AppendLine(response.Length > 2000 ? response[..2000] + "..." : response);
+            }
+            
+            output.AppendLine("---");
+            output.AppendLine($"[Agent: {definition.Name}] Completed");
+            
+            return ToolResult.Ok(output.ToString());
+        }
+        catch (Exception ex)
+        {
+            return ToolResult.Fail($"Subagent failed: {ex.Message}", ex);
+        }
+    }
+    
+    private static string BuildSubagentTask(AgentDefinition definition, string task, string? context)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine(definition.SystemPrompt);
+        sb.AppendLine();
+        if (!string.IsNullOrEmpty(context))
+        {
+            sb.AppendLine("Additional context:");
+            sb.AppendLine(context);
+            sb.AppendLine();
+        }
+        sb.AppendLine("Task:");
+        sb.AppendLine(task);
+        return sb.ToString();
     }
     
     private static AgentDefinition GetAgentDefinition(string agentType) => agentType.ToLowerInvariant() switch
     {
         "researcher" => new AgentDefinition("Researcher",
-            "You are a research specialist. Find and synthesize information.",
+            "You are a research specialist. Find and synthesize information accurately.",
             new[] { "webfetch", "websearch", "read_file", "glob", "grep" }),
         
         "coder" => new AgentDefinition("Coder",
-            "You are a coding specialist. Write clean, efficient code.",
+            "You are a coding specialist. Write clean, efficient, well-documented code.",
             new[] { "read_file", "write_file", "edit_file", "glob", "grep", "bash" }),
         
         "analyst" => new AgentDefinition("Analyst",
-            "You are an analysis specialist. Break down complex problems.",
+            "You are an analysis specialist. Break down complex problems systematically.",
             new[] { "read_file", "glob", "grep", "bash" }),
+        
+        "reviewer" => new AgentDefinition("Reviewer",
+            "You are a code review specialist. Provide constructive feedback on code quality.",
+            new[] { "read_file", "glob", "grep" }),
         
         _ => new AgentDefinition("General",
             "You are a helpful assistant.",
-            new[] { "read_file", "write_file", "edit_file", "glob", "grep", "bash", "webfetch", "websearch" })
+            new[] { "read_file", "write_file", "edit_file", "glob", "grep", "bash", "webfetch", "websearch", "ask_user", "todo_write" })
     };
     
     public override JsonElement? GetInputSchema() => JsonSerializer.SerializeToElement(new
@@ -234,12 +353,66 @@ public sealed class AgentTool : ToolBase<AgentParams>
         type = "object",
         properties = new
         {
-            agent_type = new { type = "string", description = "Type of agent to spawn" },
+            agent_type = new { type = "string", description = "Type of agent to spawn", @enum = new[] { "researcher", "coder", "analyst", "reviewer", "general" } },
             task = new { type = "string", description = "Task for the agent" },
-            context = new { type = "string", description = "Additional context" }
+            context = new { type = "string", description = "Additional context to provide" }
         },
         required = new[] { "agent_type", "task" }
     });
+}
+
+/// <summary>
+/// Filtered tool registry that only exposes allowed tools.
+/// </summary>
+public sealed class FilteredToolRegistry : IToolRegistry
+{
+    private readonly IToolRegistry _inner;
+    private readonly HashSet<string> _allowedTools;
+    
+    public FilteredToolRegistry(IToolRegistry inner, string[] allowedTools)
+    {
+        _inner = inner;
+        _allowedTools = new HashSet<string>(allowedTools, StringComparer.OrdinalIgnoreCase);
+    }
+    
+    public ITool? GetTool(string name) => 
+        _allowedTools.Contains(name) ? _inner.GetTool(name) : null;
+    
+    public IReadOnlyList<ITool> GetAllTools() => 
+        _inner.GetAllTools().Where(t => _allowedTools.Contains(t.Name)).ToList();
+    
+    public void RegisterTool(ITool tool)
+    {
+        if (_allowedTools.Contains(tool.Name))
+            _inner.RegisterTool(tool);
+    }
+    
+    public IReadOnlyList<ToolDefinition> GetToolDefinitions() =>
+        _inner.GetToolDefinitions().Where(d => _allowedTools.Contains(d.Name)).ToList();
+}
+
+/// <summary>
+/// Permission manager that allows only specific tools.
+/// </summary>
+public sealed class SubagentPermissionManager : IPermissionManager
+{
+    private readonly HashSet<string> _allowedTools;
+    
+    public SubagentPermissionManager(string[] allowedTools)
+    {
+        _allowedTools = new HashSet<string>(allowedTools, StringComparer.OrdinalIgnoreCase);
+    }
+    
+    public Task<PermissionDecision> CheckPermissionAsync(string toolName, object? input, PermissionMode mode, CancellationToken ct = default)
+    {
+        if (_allowedTools.Contains(toolName))
+            return Task.FromResult(new PermissionDecision(true));
+        return Task.FromResult(new PermissionDecision(false, $"Tool '{toolName}' is not allowed for this subagent"));
+    }
+    
+    public void AddRule(PermissionRule rule) { }
+    public void RemoveRule(string ruleId) { }
+    public IReadOnlyList<PermissionRule> GetRules() => Array.Empty<PermissionRule>();
 }
 
 public sealed class AgentParams
