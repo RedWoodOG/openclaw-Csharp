@@ -1,0 +1,1 @@
+C:\Users\jwhit\.openclaw\workspace\OpenClaw.CS\OpenClaw.Desktop\obj\x64\Debug\net9.0-windows10.0.26100.0\OpenClaw.Desktop.csproj.AssemblyReference.cache

@@ -1,0 +1,36 @@
+{
+  "version": 2,
+  "dgSpecHash": "kJJB1soQR5I=",
+  "success": true,
+  "projectFilePath": "c:\\Users\\jwhit\\.openclaw\\workspace\\OpenClaw.CS\\build-tools\\StubTasks\\StubTasks.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\jwhit\\.nuget\\packages\\microsoft.build.framework\\17.8.3\\microsoft.build.framework.17.8.3.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\microsoft.build.utilities.core\\17.8.3\\microsoft.build.utilities.core.17.8.3.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\microsoft.io.redist\\6.0.0\\microsoft.io.redist.6.0.0.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\microsoft.net.stringtools\\17.8.3\\microsoft.net.stringtools.17.8.3.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\microsoft.visualstudio.setup.configuration.interop\\3.2.2146\\microsoft.visualstudio.setup.configuration.interop.3.2.2146.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\system.buffers\\4.5.1\\system.buffers.4.5.1.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\system.collections.immutable\\7.0.0\\system.collections.immutable.7.0.0.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\system.configuration.configurationmanager\\7.0.0\\system.configuration.configurationmanager.7.0.0.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\system.memory\\4.5.5\\system.memory.4.5.5.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\system.security.accesscontrol\\6.0.0\\system.security.accesscontrol.6.0.0.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\system.security.permissions\\7.0.0\\system.security.permissions.7.0.0.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\system.security.principal.windows\\5.0.0\\system.security.principal.windows.5.0.0.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'Microsoft.Build.Utilities.Core' 17.8.3 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3q9-fxm7-j8fq",
+      "projectPath": "c:\\Users\\jwhit\\.openclaw\\workspace\\OpenClaw.CS\\build-tools\\StubTasks\\StubTasks.csproj",
+      "warningLevel": 1,
+      "filePath": "c:\\Users\\jwhit\\.openclaw\\workspace\\OpenClaw.CS\\build-tools\\StubTasks\\StubTasks.csproj",
+      "libraryId": "Microsoft.Build.Utilities.Core",
+      "targetGraphs": [
+        "net472"
+      ]
+    }
+  ]
+}

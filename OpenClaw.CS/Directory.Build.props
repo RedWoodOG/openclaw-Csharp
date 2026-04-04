@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <AppxMSBuildToolsPath>$(MSBuildThisFileDirectory)build-tools\output\</AppxMSBuildToolsPath>
+  </PropertyGroup>
+</Project>

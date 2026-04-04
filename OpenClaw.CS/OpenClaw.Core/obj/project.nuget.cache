@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "dgSpecHash": "BpTBwT4fANA=",
+  "success": true,
+  "projectFilePath": "c:\\Users\\jwhit\\.openclaw\\workspace\\OpenClaw.CS\\OpenClaw.Core\\OpenClaw.Core.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\jwhit\\.nuget\\packages\\cronos\\0.8.4\\cronos.0.8.4.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\fluentvalidation\\11.9.0\\fluentvalidation.11.9.0.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\9.0.0\\microsoft.extensions.dependencyinjection.9.0.0.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\9.0.0\\microsoft.extensions.dependencyinjection.abstractions.9.0.0.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\microsoft.extensions.logging\\9.0.0\\microsoft.extensions.logging.9.0.0.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\9.0.0\\microsoft.extensions.logging.abstractions.9.0.0.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\microsoft.extensions.options\\9.0.0\\microsoft.extensions.options.9.0.0.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\microsoft.extensions.primitives\\9.0.0\\microsoft.extensions.primitives.9.0.0.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\polly\\8.5.0\\polly.8.5.0.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\polly.core\\8.5.0\\polly.core.8.5.0.nupkg.sha512",
+    "C:\\Users\\jwhit\\.nuget\\packages\\system.text.json\\9.0.0\\system.text.json.9.0.0.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1510",
+      "level": "Warning",
+      "message": "PackageReference System.Text.Json will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "projectPath": "c:\\Users\\jwhit\\.openclaw\\workspace\\OpenClaw.CS\\OpenClaw.Core\\OpenClaw.Core.csproj",
+      "warningLevel": 1,
+      "filePath": "c:\\Users\\jwhit\\.openclaw\\workspace\\OpenClaw.CS\\OpenClaw.Core\\OpenClaw.Core.csproj",
+      "libraryId": "System.Text.Json",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    }
+  ]
+}

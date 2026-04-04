@@ -1,0 +1,13 @@
+C:\Users\jwhit\.openclaw\workspace\OpenClaw.CS\OpenClaw.Core\bin\Debug\net9.0\OpenClaw.Core.deps.json
+C:\Users\jwhit\.openclaw\workspace\OpenClaw.CS\OpenClaw.Core\bin\Debug\net9.0\OpenClaw.Core.dll
+C:\Users\jwhit\.openclaw\workspace\OpenClaw.CS\OpenClaw.Core\bin\Debug\net9.0\OpenClaw.Core.pdb
+C:\Users\jwhit\.openclaw\workspace\OpenClaw.CS\OpenClaw.Core\obj\Debug\net9.0\OpenClaw.Core.csproj.AssemblyReference.cache
+C:\Users\jwhit\.openclaw\workspace\OpenClaw.CS\OpenClaw.Core\obj\Debug\net9.0\OpenClaw.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\jwhit\.openclaw\workspace\OpenClaw.CS\OpenClaw.Core\obj\Debug\net9.0\OpenClaw.Core.AssemblyInfoInputs.cache
+C:\Users\jwhit\.openclaw\workspace\OpenClaw.CS\OpenClaw.Core\obj\Debug\net9.0\OpenClaw.Core.AssemblyInfo.cs
+C:\Users\jwhit\.openclaw\workspace\OpenClaw.CS\OpenClaw.Core\obj\Debug\net9.0\OpenClaw.Core.csproj.CoreCompileInputs.cache
+C:\Users\jwhit\.openclaw\workspace\OpenClaw.CS\OpenClaw.Core\obj\Debug\net9.0\OpenClaw.Core.sourcelink.json
+C:\Users\jwhit\.openclaw\workspace\OpenClaw.CS\OpenClaw.Core\obj\Debug\net9.0\OpenClaw.Core.dll
+C:\Users\jwhit\.openclaw\workspace\OpenClaw.CS\OpenClaw.Core\obj\Debug\net9.0\refint\OpenClaw.Core.dll
+C:\Users\jwhit\.openclaw\workspace\OpenClaw.CS\OpenClaw.Core\obj\Debug\net9.0\OpenClaw.Core.pdb
+C:\Users\jwhit\.openclaw\workspace\OpenClaw.CS\OpenClaw.Core\obj\Debug\net9.0\ref\OpenClaw.Core.dll
